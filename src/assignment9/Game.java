@@ -5,36 +5,49 @@ import java.awt.event.KeyEvent;
 import edu.princeton.cs.introcs.StdDraw;
 
 public class Game {
+    private Snake snake;
+    private Food food;
 	
 	public Game() {
 		StdDraw.enableDoubleBuffering();
 		
 		//FIXME - construct new Snake and Food objects
+        snake = new Snake();
+        food = new Food();
 	}
 	
 	public void play() {
-		while (true) { //TODO: Update this condition to check if snake is in bounds
+		while (snake.isInbounds()) { //TODO: Update this condition to check if snake is in bounds
 			int dir = getKeypress();
 			//Testing only: you will eventually need to do more work here
-			System.out.println("Keypress: " + dir);
-			
-			/*
-			 * 1. Pass direction to your snake
-			 * 2. Tell the snake to move
-			 * 3. If the food has been eaten, make a new one
-			 * 4. Update the drawing
-			 */
-		}
+			if (dir != -1) {
+                snake.changeDirection(dir);
+            }
+            
+            snake.move();
+            
+            if (snake.eatFood(food)) {
+                food = new Food();
+            }
+            
+            updateDrawing();
+            
+            // Slow down the game
+            StdDraw.pause(100);
+        }
+		StdDraw.clear();
+        StdDraw.text(0.5, 0.5, "Game Over!");
+        StdDraw.show();
 	}
 	
 	private int getKeypress() {
-		if(StdDraw.isKeyPressed(KeyEvent.VK_W)) {
+		if(StdDraw.isKeyPressed(KeyEvent.VK_UP) || StdDraw.isKeyPressed(KeyEvent.VK_W)) {
 			return 1;
-		} else if (StdDraw.isKeyPressed(KeyEvent.VK_S)) {
+		} else if (StdDraw.isKeyPressed(KeyEvent.VK_DOWN) || StdDraw.isKeyPressed(KeyEvent.VK_S)) {
 			return 2;
-		} else if (StdDraw.isKeyPressed(KeyEvent.VK_A)) {
+		} else if (StdDraw.isKeyPressed(KeyEvent.VK_LEFT) || StdDraw.isKeyPressed(KeyEvent.VK_A)) {
 			return 3;
-		} else if (StdDraw.isKeyPressed(KeyEvent.VK_D)) {
+		} else if (StdDraw.isKeyPressed(KeyEvent.VK_RIGHT) || StdDraw.isKeyPressed(KeyEvent.VK_D)) {
 			return 4;
 		} else {
 			return -1;
@@ -46,7 +59,11 @@ public class Game {
 	 */
 	private void updateDrawing() {
 		//FIXME
-		
+		StdDraw.clear();
+        snake.draw();
+        food.draw();
+        StdDraw.show();
+        StdDraw.pause(50);
 		/*
 		 * 1. Clear screen
 		 * 2. Draw snake and food
